@@ -1,0 +1,6 @@
+flask
+twilio
+tensorflow
+pillow
+python-dotenv
+requests
