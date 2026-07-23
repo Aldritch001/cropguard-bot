@@ -4,9 +4,8 @@ import requests
 import numpy as np
 from io import BytesIO
 from PIL import Image
-from flask import Flask, request
+from flask import Flask, request, render_template, jsonify, send_from_directory
 from twilio.twiml.messaging_response import MessagingResponse
-from twilio.rest import Client
 from dotenv import load_dotenv
 import tensorflow as tf
 
@@ -276,11 +275,61 @@ def answer_question(question):
         )
 
 
+# PWA routes
+
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+
+@app.route("/diagnose", methods=["POST"])
+def diagnose():
+    if "image" not in request.files:
+        return jsonify({"error": "No image provided"}), 400
+
+    file = request.files["image"]
+    image_bytes = file.read()
+
+    try:
+        class_name, confidence = predict_disease(image_bytes)
+        advice = TREATMENT_ADVICE.get(
+            class_name,
+            "No specific treatment advice available for this condition yet. "
+            "Please consult your local agricultural extension officer."
+        )
+        category = get_disease_category(class_name)
+        recommendation = BRAND_RECOMMENDATIONS.get(category, "")
+        display_name = class_name.replace("___", " - ").replace("_", " ")
+
+        return jsonify({
+            "disease": display_name,
+            "confidence": round(confidence, 2),
+            "treatment": advice,
+            "recommendation": recommendation
+        })
+
+    except Exception as e:
+        return jsonify({"error": "Could not process image. Please try again."}), 500
+
+
+@app.route("/ask", methods=["POST"])
+def ask():
+    data = request.get_json()
+    question = data.get("question", "").strip()
+
+    if not question:
+        return jsonify({"answer": "Please enter a question."}), 400
+
+    answer = answer_question(question)
+    return jsonify({"answer": answer})
+
+
+# WhatsApp webhook
+
 @app.route("/webhook", methods=["POST"])
 def webhook():
     incoming_msg = request.form.get("Body", "").strip()
     num_media = int(request.form.get("NumMedia", 0))
-    sender = request.form.get("From", "")
 
     resp = MessagingResponse()
     msg = resp.message()
@@ -309,23 +358,20 @@ def webhook():
                 "Send me a clear photo of your crop's affected leaf and I will "
                 "identify the disease and tell you exactly how to treat it.\n\n"
                 "You can also type any question about your crops and I will do my best to help.\n\n"
-                "This service is completely free."
+                "This service is completely free.\n\n"
+                "You can also visit us at: https://cropguardai.app"
             )
         else:
             reply = answer_question(incoming_msg)
     else:
         reply = (
             "Send me a photo of your affected crop leaf for a diagnosis, "
-            "or type a question about your crops."
+            "or type a question about your crops. "
+            "You can also visit cropguardai.app for our full web experience."
         )
 
     msg.body(reply)
     return str(resp)
-
-
-@app.route("/", methods=["GET"])
-def index():
-    return "CropGuard AI is running.", 200
 
 
 if __name__ == "__main__":

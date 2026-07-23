@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1D9E75">
+  <meta name="description" content="AI powered crop disease detection for smallholder farmers. Free, instant diagnosis from a single photo.">
+  <title>CropGuard AI</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <div class="logo-mark">C</div>
+        <span>CropGuard AI</span>
+      </div>
+      <div class="nav-links">
+        <a href="#diagnose">Diagnose</a>
+        <a href="#map">Outbreak Map</a>
+        <a href="#ask">Ask a Question</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">Free for all farmers</div>
+      <h1>Know what's killing your crops.<br>In seconds.</h1>
+      <p class="hero-sub">Take a photo of your affected leaf. CropGuard AI identifies the disease, tells you exactly how to treat it, and recommends the right product — instantly.</p>
+      <div class="hero-actions">
+        <a href="#diagnose" class="btn-primary">Diagnose a crop</a>
+        <a href="https://wa.me/14155238886" target="_blank" class="btn-secondary">Use on WhatsApp</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">94.77%</span>
+          <span class="stat-label">Model accuracy</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">23</span>
+          <span class="stat-label">Disease classes</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">5</span>
+          <span class="stat-label">Crop types</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="diagnose-section" id="diagnose">
+    <div class="section-inner">
+      <h2>Diagnose your crop</h2>
+      <p class="section-sub">Upload a clear photo of the affected leaf. Works best in natural daylight with the leaf filling most of the frame.</p>
+
+      <div class="upload-card" id="upload-card">
+        <div class="upload-area" id="upload-area">
+          <div class="upload-icon">📷</div>
+          <p class="upload-text">Tap to upload a leaf photo</p>
+          <p class="upload-hint">JPG or PNG, taken in good lighting</p>
+          <input type="file" id="file-input" accept="image/*" capture="environment">
+        </div>
+
+        <div class="quality-warning" id="quality-warning" style="display:none">
+          <span class="warning-icon">⚠️</span>
+          <span id="warning-text">Image quality too low. Please take another photo in better lighting.</span>
+        </div>
+
+        <div class="preview-area" id="preview-area" style="display:none">
+          <img id="preview-img" src="" alt="Uploaded leaf">
+          <button class="btn-ghost" id="clear-btn">Remove photo</button>
+        </div>
+
+        <button class="btn-primary btn-full" id="diagnose-btn" style="display:none">Analyse this leaf</button>
+      </div>
+
+      <div class="result-card" id="result-card" style="display:none">
+        <div class="result-header">
+          <div class="result-badge" id="result-badge"></div>
+          <h3 id="result-disease"></h3>
+          <div class="confidence-bar-wrap">
+            <div class="confidence-bar" id="confidence-bar"></div>
+          </div>
+          <p class="confidence-label" id="confidence-label"></p>
+        </div>
+        <div class="result-body">
+          <div class="result-block">
+            <h4>Treatment</h4>
+            <p id="result-treatment"></p>
+          </div>
+          <div class="result-block sponsor-block" id="sponsor-block">
+            <h4>Recommended product</h4>
+            <p id="result-sponsor"></p>
+          </div>
+        </div>
+        <button class="btn-ghost btn-full" id="diagnose-again-btn">Diagnose another crop</button>
+      </div>
+
+      <div class="loading-card" id="loading-card" style="display:none">
+        <div class="spinner"></div>
+        <p>Analysing your crop...</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="map-section" id="map">
+    <div class="section-inner">
+      <h2>Regional disease map</h2>
+      <p class="section-sub">Anonymized, aggregated data showing which diseases are being detected and where. Updated in real time as farmers use CropGuard.</p>
+      <div class="map-placeholder">
+        <div class="map-coming-soon">
+          <span>🗺️</span>
+          <p>Outbreak map launches once we have regional user data.</p>
+          <p class="map-hint">Use CropGuard and share it with farmers in your area to help build this map.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="ask-section" id="ask">
+    <div class="section-inner">
+      <h2>Ask a farming question</h2>
+      <p class="section-sub">Not sure what you're looking at? Ask anything about crops, soil, pests, or treatment and get practical advice instantly.</p>
+      <div class="ask-card">
+        <textarea id="question-input" placeholder="e.g. How do I prevent tomato blight from spreading?" rows="3"></textarea>
+        <button class="btn-primary btn-full" id="ask-btn">Get advice</button>
+        <div class="answer-area" id="answer-area" style="display:none">
+          <div class="answer-loading" id="answer-loading" style="display:none">
+            <div class="spinner spinner-sm"></div>
+            <p>Thinking...</p>
+          </div>
+          <div class="answer-text" id="answer-text"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="whatsapp-section">
+    <div class="section-inner">
+      <h2>Prefer WhatsApp?</h2>
+      <p class="section-sub">Send a photo directly to our WhatsApp number and get a diagnosis in the chat. No app download needed.</p>
+      <a href="https://wa.me/14155238886" target="_blank" class="btn-whatsapp">
+        <span>💬</span> Open in WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <div class="logo-mark logo-mark-sm">C</div>
+        <span>CropGuard AI</span>
+      </div>
+      <p class="footer-text">Built by Absolon. Free for farmers, forever.</p>
+      <p class="footer-text">For partnerships and enterprise inquiries: <a href="mailto:hello@cropguardai.app">hello@cropguardai.app</a></p>
+    </div>
+  </footer>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
