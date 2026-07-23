@@ -185,7 +185,7 @@ askBtn.addEventListener("click", async () => {
 
     const data = await response.json()
     answerLoading.style.display = "none"
-    answerText.textContent = data.answer
+    answerText.textContent = data.answer.replace(/\*\*/g, "").replace(/---/g, "").trim()
 
   } catch (err) {
     answerLoading.style.display = "none"
