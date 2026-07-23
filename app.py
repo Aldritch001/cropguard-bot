@@ -245,7 +245,7 @@ def answer_question(question):
         "anthropic-version": "2023-06-01",
         "content-type": "application/json",
     }
-payload = {
+    payload = {
         "model": "claude-sonnet-4-6",
         "max_tokens": 400,
         "system": (
